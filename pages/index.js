@@ -1,8 +1,89 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useEffect , useRef, useState} from 'react'
+import {getData, postData,deleteUser } from '../helpers'
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import bcrytp from 'bcryptjs'
+import '../database/config/config'
+import Swal from 'sweetalert2'
+import MyInput from 'components/MyInput';
+import MyUsers from 'components/MyUsers';
+import { CardGroup } from 'react-bootstrap';
 export default function Home() {
+  const userRef= useRef();
+  const emailRef= useRef();
+  const passRef= useRef(); 
+  const nomRef=useRef();
+  const apeRef=useRef();
+  const imgRef=useRef();
+  const [usuarios,setUsuarios]=useState([])
+ 
+  const deleteUsuario=(id)=>{
+    deleteUser(id);
+    Swal.fire(
+      'Se eliminó el usuario!',
+      `${id}`,
+      'success'
+    )
+  }
+  const register=(e)=>{
+    e.preventDefault();
+    let error={};
+    if(userRef.current.value==""){
+      error.message="Este campo usuaruo es obligatorio"
+    }else if(emailRef.current.value==""){
+      error.message="Este campo email es obligatorio"
+    }else if(passRef.current.value==""){
+      error.message="Este campo clave es obligatorio"
+    }else if(nomRef.current.value==""){
+      error.message="Este campo nombre es obligatorio"
+    }else if(apeRef.current.value==""){
+      error.message="Este campo apellido es obligatorio"
+    }
+    if(error.message != undefined){
+      console.log(error.message);
+    }
+    
+    let user = usuarios.filter(u=>u.email==emailRef.current.value);
+    if(user.length!=0){
+      error.message="El usuario existe"
+    }
+    let newUser={
+      user:userRef.current.value,
+      name:nomRef.current.value,
+      last:apeRef.current.value,
+      email:emailRef.current.value,
+      img:imgRef.current.value,
+      pass:bcrytp.hashSync(passRef.current.value,12),
+    };
+    if(error?.message!=undefined){
+      console.log(error?.message);
+    }else{
+     let miUser=postData(newUser);
+     Swal.fire(
+      'Se agregó el usuario!',
+      `${miUser.name}`,
+      'success'
+    )
+    }
+  }
+  
+
+  useEffect(() => {
+      getData().then(({data})=>{
+        console.log(data);
+        setUsuarios(data);
+      })
+      if (usuarios!=undefined) {
+        console.log('hay');
+      }
+    
+    
+  },[])
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,25 +93,84 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
+
+        <h1 className={styles.title}  >
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>
+        <p className={styles.description} >
           Get started by editing{' '}
           <code className={styles.code}>pages/index.js</code>
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          <h2>Register</h2>
+          <Form  className={styles.card} onSubmit={register}>
+          <InputGroup className="mb-3">
+              <InputGroup.Text id="nombre">Nombre</InputGroup.Text>
+              <Form.Control
+                name="nombre"
+                aria-describedby="nombre"
+                ref={nomRef}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="apellido">Apellido</InputGroup.Text>
+              <Form.Control
+                name="apellido"
+                aria-describedby="apellido"
+                ref={apeRef}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="username">Usuario</InputGroup.Text>
+              <Form.Control
+                name="username"
+                aria-describedby="username"
+                ref={userRef}
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="email">email@</InputGroup.Text>
+              <Form.Control
+                name="email"
+                aria-describedby="email"
+                
+                ref={emailRef}
+               
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <InputGroup.Text id="img">imagen@</InputGroup.Text>
+              <Form.Control
+                name="img"
+                aria-describedby="img"
+                ref={imgRef}               
+              />
+            </InputGroup>
+              <MyInput 
+              text="Password"
+              nameInput={"password"} 
+              inputRef={passRef}
+              inputType="password"/>
+           
+            <InputGroup className="mb-3">
+              <Form.Control
+              type='submit'
+                aria-label="btn"
+                aria-describedby="btn"
+                value='Registrarse'
+              />
+            </InputGroup>
+          </Form>
 
           <a href="https://nextjs.org/learn" className={styles.card}>
             <h2>Learn &rarr;</h2>
             <p>Learn about Next.js in an interactive course with quizzes!</p>
           </a>
+        <CardGroup>
+         <MyUsers usuarios={usuarios} deleteUsuario={deleteUsuario} />
+         </CardGroup>
 
           <a
             href="https://github.com/vercel/next.js/tree/canary/examples"
