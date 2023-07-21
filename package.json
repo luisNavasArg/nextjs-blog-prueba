@@ -2,6 +2,10 @@
   "name": "example_next",
   "version": "0.1.0",
   "private": true,
+  "node:":{
+    "engines":"18.16.1"
+
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
