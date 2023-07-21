@@ -10,6 +10,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 50px;
 }
 
 .footer {
@@ -126,4 +127,7 @@
   .logo img {
     filter: invert(1);
   }
+}
+.nav{
+  border-radius: 0px 25px;
 }

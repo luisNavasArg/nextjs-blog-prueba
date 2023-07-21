@@ -1,16 +1,14 @@
 export const getData = async()=>{
     try {
-      const response = await fetch("http://localhost:3000/api/users")
+      const response = await fetch("/api/users")
       const result = await response.json();
       return result
     } catch (error) {
       return {error: error};
     }
-    
-    
 }
 export const postData = async(data)=>{
-    let url = "http://localhost:3000/api/users"
+    let url = "/api/users"
     try {
         const response = await fetch(url, {
           method: "POST", // or 'PUT'
@@ -26,8 +24,7 @@ export const postData = async(data)=>{
       }
 }
 export const deleteUser=async(id)=>{
-  let url = "http://localhost:3000/api/users/"+id;
-  console.log(url);
+  let url = "/api/users/"+id;
   try {
       const response = await fetch(url, {
         method: "DELETE", 

@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import {Card,CardImg,FormControl} from 'react-bootstrap'
 
 const MyUsers = ({usuarios,deleteUsuario}) => {
+  
   return (
     <>
-    {usuarios.map((u,i)=>{
+    {usuarios?.map((u,i)=>{
         return(
         <Card key={i} className='m-4'>
             <Card.Header>
@@ -25,6 +27,7 @@ const MyUsers = ({usuarios,deleteUsuario}) => {
                 </Card.Body>
         </Card>)
       })}
+    
       </>
   )
 }
